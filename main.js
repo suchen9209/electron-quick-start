@@ -17,7 +17,7 @@ function createWindow () {
 
 function createBarWindow () {
   barWindow = new BrowserWindow({width: 1024, height: 768,fullscreen: true})
-  barWindow.webContents.openDevTools()
+  //barWindow.webContents.openDevTools()
   barWindow.loadFile('cms/page/home/home.html')
   barWindow.on('closed', function () {
     barWindow = null
