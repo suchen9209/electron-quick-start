@@ -1,6 +1,13 @@
 const electron = require('electron')
 const {app, BrowserWindow, Menu} = require('electron')
 
+
+// var cmd=require('node-cmd');
+// cmd.get('git pull',function(err,data,stderr){
+//   console.log(data)
+// })
+
+
 let mainWindow
 let showWindow
 let barWindow
