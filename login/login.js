@@ -9,8 +9,6 @@ layui.use(['form','layer','jquery'],function(){
       }
     });
      $("#fuck").click(function(){
-       
-        alert(1);
         login();
     })
   
