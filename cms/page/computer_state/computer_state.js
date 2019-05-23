@@ -5,10 +5,10 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
         laydate = layui.laydate,
         laytpl = layui.laytpl,
         table = layui.table;
-    element = layui.element;
+        element = layui.element;
         num = 0;
     $.ajax({
-        url: "https://pay.imbatv.cn/api/machine/all",
+        url: "https://pay.imbatv.cn/direct/machine/all",
         type: "GET",
         dataType: 'json',
         success: function(data) {
@@ -230,15 +230,15 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
                     html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "' class='cur a" + (i - 97) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
                 }
             }
-            for (var i = 103; i < 108; i++) {
-                if (data[i].state == 1) {
-                    html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "' class='a" + (i - 102) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
-                }else if (data[i].state == 4) {
-                    html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "'  class='damage a" + (i - 57) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
-                } else {
-                    html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "' class='cur a" + (i - 102) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
-                }
-            }
+            // for (var i = 103; i < 108; i++) {
+            //     if (data[i].state == 1) {
+            //         html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "' class='a" + (i - 102) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
+            //     }else if (data[i].state == 4) {
+            //         html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "'  class='damage a" + (i - 57) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
+            //     } else {
+            //         html_19 += "<span mid='" + data[i].mid + "' data-uid='" + data[i].uid + "' class='cur a" + (i - 102) + " m" + data[i].mid + "'>" + data[i].machine_name + "</span>";
+            //     }
+            // }
 
             for (var i = 108; i < 113; i++) {
                 if (data[i].state == 1) {
@@ -457,18 +457,15 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
             window.addEventListener("load", init, false);
             // 获取呼叫列表
             $.ajax({
-                url: "https://pay.imbatv.cn/api/service",
+                url: "https://pay.imbatv.cn/direct/service",
                 type: "GET",
                 dataType: 'json',
                 success: function(data) {
                     var arr1 = new Array();
-                    console.log(data.data);
-                    console.log(data);
                     for (var i = 0; i < data.data.length; i++) {
                         arr1.push(data.data[i]);
                         $(".m" + data.data[i]).addClass("call");
                     }
-                    // console.log(arr1);
                 },
                 error: function(err) {
                     console.log(err)
@@ -482,7 +479,7 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
                 // 判断是否需要显示取消呼叫按钮
                 if ($(this).hasClass('call')) {
                     $.ajax({
-                        url: "https://pay.imbatv.cn/api/user/get_active_user_info",
+                        url: "https://pay.imbatv.cn/direct/user/get_active_user_info",
                         type: "POST",
                         data: {
                             user_id: uid,
@@ -496,7 +493,7 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
                             $(".box .box_cn .cn span.cn4").html('手机号:' + data.data.phone);
                             $(".box .box_cn .cn span.cn5").html('会员等级:' + data.data.level);
                             $(".box .box_cn .cn span.cn6").html('上机时长:' + formatDuring(data.data.duration));
-                            $(".box .box_cn .cn span.cn7").html('本次消费:' + data.data.phone);
+                            $(".box .box_cn .cn span.cn7").html('本次消费:' + data.data.cost +"元");
 
                             layer.open({
                                 type: 1,
@@ -507,16 +504,14 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
                                 content: $('.box'), //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
                                 btn: ['取消呼叫'],
                                 yes: function(cms) {
-                                    console.log(cms);
                                     $.ajax({
-                                        url: "https://pay.imbatv.cn/api/service/cancel",
+                                        url: "https://pay.imbatv.cn/direct/service/cancel",
                                         type: "POST",
                                         data: {
                                             user_id: uid,
                                         },
                                         dataType: 'json',
                                         success: function(data) {
-                                            console.log(data);
                                             $(".m" + data.data).removeClass('call');
                                             layer.closeAll();
                                         },
@@ -531,9 +526,9 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
                             console.log(err)
                         }
                     });
-                } else {
+                } else if($(this).hasClass('not_enough_money')){
                     $.ajax({
-                        url: "https://pay.imbatv.cn/api/user/get_active_user_info",
+                        url: "https://pay.imbatv.cn/direct/user/get_active_user_info",
                         type: "POST",
                         data: {
                             user_id: uid,
@@ -547,7 +542,56 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
                             $(".box .box_cn .cn span.cn4").html('手机号:' + data.data.phone);
                             $(".box .box_cn .cn span.cn5").html('会员等级:' + data.data.level);
                             $(".box .box_cn .cn span.cn6").html('上机时长:' + formatDuring(data.data.duration));
-                            $(".box .box_cn .cn span.cn7").html('本次消费:' + data.data.phone);
+                            $(".box .box_cn .cn span.cn7").html('本次消费:' + data.data.cost +"元");
+
+                            layer.open({
+                                type: 1,
+                                closeBtn: 0,
+                                title: false,
+                                shadeClose: true,
+                                area: ['780px', '480px'],
+                                content: $('.box'), //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                btn: ['取消'],
+                                yes: function(cms) {
+                                    $.ajax({
+                                        url: "https://pay.imbatv.cn/direct/service/cancel",
+                                        type: "POST",
+                                        data: {
+                                            user_id: uid,
+                                        },
+                                        dataType: 'json',
+                                        success: function(data) {
+                                            $(".m" + data.data).removeClass('not_enough_money');
+                                            layer.closeAll();
+                                        },
+                                        error: function(err) {
+                                            console.log(err)
+                                        }
+                                    });
+                                }
+                            });
+                        },
+                        error: function(err) {
+                            console.log(err)
+                        }
+                    });
+                }else {
+                    $.ajax({
+                        url: "https://pay.imbatv.cn/direct/user/get_active_user_info",
+                        type: "POST",
+                        data: {
+                            user_id: uid,
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $(".box .box_cn h1").html(machine_numbe + '使用中');
+                            $(".box .box_cn .cn span.cn1").html('会员号:' + data.data.username);
+                            $(".box .box_cn .cn span.cn2").html('姓名:' + data.data.name);
+                            $(".box .box_cn .cn span.cn3").html('余额:' + data.data.balance);
+                            $(".box .box_cn .cn span.cn4").html('手机号:' + data.data.phone);
+                            $(".box .box_cn .cn span.cn5").html('会员等级:' + data.data.level);
+                            $(".box .box_cn .cn span.cn6").html('上机时长:' + formatDuring(data.data.duration));
+                            $(".box .box_cn .cn span.cn7").html('本次消费:' + data.data.cost+"元");
 
                             layer.open({
                                 type: 1,
@@ -570,11 +614,10 @@ layui.use(['form', 'layer', 'laydate', 'table', 'laytpl', 'element'], function()
             });
 
             $.ajax({
-                url: "https://pay.imbatv.cn/api/appointment/num",
+                url: "https://pay.imbatv.cn/direct/appointment/num",
                 type: "GET",
                 dataType: 'json',
                 success: function(data) {
-                    console.log(data);
                     $(".information .sp1").html('5人包厢:' + data.data['5人包厢']);
                     $(".information .sp2").html('6人包厢:' + data.data['6人包厢']);
                     $(".information .sp3").html('10人包厢:' + data.data['10人包厢']);
@@ -598,7 +641,6 @@ function formatDuring(mss) {
     var hours = parseInt((mss % (60 * 60 * 24)) / (60 * 60));
     var minutes = parseInt((mss % (60 * 60)) / (60));
     var seconds = (mss % (1000 * 60)) / 1000;
-    console.log(seconds);
     return days + " 天 " + hours + " 小时 " + minutes + " 分钟 ";
 }
 
@@ -644,7 +686,6 @@ function onMessage(evt) {
 
     });
     var res = JSON.parse(evt.data);
-    console.log(res);
     if (res.cmd == 'open') {
         $(".m" + res.mid).addClass('cur');
 
@@ -663,6 +704,7 @@ function onMessage(evt) {
         });
     } else if(res.cmd == 'not_enough_money'){
          var machineid = $(".m" + res.mid).html() + "账户余额不足";
+         $(".m" + res.mid).addClass('not_enough_money');
          layer.msg('<span style="font-size:20px;display:block;height:195px;line-height:195px;">' + machineid + '</span>', {
             area: ['320px', '220px'],
             offset: 'rb',
@@ -675,7 +717,6 @@ function onMessage(evt) {
         num = num - 1;
     }
     $(".m" + res.mid).attr('data-uid', res.uid);
-    console.log(num);
     if (num == 0) {
        $(".new_order").html(""); 
     }

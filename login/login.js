@@ -2,13 +2,22 @@ layui.use(['form','layer','jquery'],function(){
     var form = layui.form,
         layer = parent.layer === undefined ? layui.layer : top.layer
         $ = layui.jquery;
-
+      // enter
+    $(document).keyup(function(event){
+      if(event.keyCode ==13){
+        login();
+      }
+    });
      $("#fuck").click(function(){
-       var username = document.getElementById("username").value;
+       
+        alert(1);
+        login();
+    })
+  
+     function login(){
+        var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
-         console.log(username);
-         console.log(password);
-        $.ajax({
+         $.ajax({
             type: "POST",                  //提交方式
             dataType: "json",              //预期服务器返回的数据类型
             url: "https://pay.imbatv.cn/api/login",          //目标url
@@ -34,9 +43,7 @@ layui.use(['form','layer','jquery'],function(){
                 alert(result);
             }
         });
-    })
-  
-     
+     }
 
     //表单输入效果
     $(".loginBody .input-item").click(function(e){

@@ -8,8 +8,15 @@ layui.use(['form', 'util', 'layer', 'laydate', 'table', 'laytpl', 'util'], funct
         table = layui.table;
         userid = '';
         level ='';
+        active ='';
+    // enter
+    $(document).keyup(function(event){
+      if(event.keyCode ==13){
+        search();
+      }
+    });
     // 搜索
-    $('.search_btn1').on('click', function() {
+    function search(){
         var searchVal1 = $(".searchVal1").val();
         $.ajax({
                 url: 'https://pay.imbatv.cn/api/user/find?parm='+searchVal1,
@@ -47,32 +54,43 @@ layui.use(['form', 'util', 'layer', 'laydate', 'table', 'laytpl', 'util'], funct
                     console.log(err);
                 }
             });
+    }
+    $('.search_btn1').on('click', function() {
+       search();
     });
 // 上机
  $('.op-cp').on('click', function() {
     if (userid == "") {
-        layer.msg("请输入正确信息！！！");
+        layer.msg("请输入正确信息！！！", { time: 3000, icon: 5 });
     }else{
-        window.location.href = '../../page/boot_up/starting_up.html?userid=' + userid ;
+        if(!active) {
+            window.location.href = '../../page/boot_up/starting_up.html?userid=' + userid ;
+        }else{
+            layer.msg("该用户已经处于上机状态！", { time: 3000, icon: 5 });
+        } 
     }
  });
  // 下机
  $('.down-cp').on('click', function() {
     var searchVal2 = $(".searchVal2").val();
     if (userid == "" && searchVal2 == "") {
-        layer.msg("请输入正确信息！！！");
+        layer.msg("请输入正确信息！！！", { time: 3000, icon: 5 });
     }else{
-        if(searchVal2 != ""){
-            window.location.href = '../../page/Shutdown/Down_machine.html?machine_id=' + searchVal2 +'&userid=0' ;
+        if(userid != ""){
+            if(!active) {
+                window.location.href = '../../page/Shutdown/Down_machine.html?userid=' + userid +'&machine_id=0';
+            }else{
+                layer.msg("该用户已经处于下机状态！", { time: 3000, icon: 5 });
+            } 
         }else{
-            window.location.href = '../../page/Shutdown/Down_machine.html?userid=' + userid +'&machine_id=0' ;
-            }
+             window.location.href = '../../page/Shutdown/Down_machine.html?machine_id=' + searchVal2 +'&userid=0';
+        }
     }
  });
  // 充值
  $('.edit').on('click', function() {
     if (userid == "") {
-        layer.msg("请输入正确信息！！！");
+        layer.msg("请输入正确信息！！！", { time: 3000, icon: 5 });
     }else{
         window.location.href = '../../page/invest_money/recharge.html?userid=' + userid ;
     }
@@ -84,7 +102,7 @@ layui.use(['form', 'util', 'layer', 'laydate', 'table', 'laytpl', 'util'], funct
  // 特殊vip管理
  $('.vip').on('click', function() {
      if (userid == "") {
-        layer.msg("请输入正确信息！！！");
+       layer.msg("请输入正确信息！！！", { time: 3000, icon: 5 });
     }else{
         window.location.href = '../../page/manag_VIP/vip.html?userid='+ userid;
     }
@@ -101,7 +119,7 @@ layui.use(['form', 'util', 'layer', 'laydate', 'table', 'laytpl', 'util'], funct
  // 赠送优惠劵
  $('.give').on('click', function() {
     if (userid == "") {
-        layer.msg("请输入正确信息！！！");
+       layer.msg("请输入正确信息！！！", { time: 3000, icon: 5 });
     }else{
         window.location.href = '../../page/give/give.html?userid='+userid;
     }
@@ -112,7 +130,7 @@ layui.use(['form', 'util', 'layer', 'laydate', 'table', 'laytpl', 'util'], funct
  });
   // 备用
  $('.spare').on('click', function() {
-     layer.msg("敬请期待！");
+     layer.msg("敬请期待", { time: 3000, icon: 5 });
  });
 });
 // 验证手机号
